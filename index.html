@@ -159,7 +159,8 @@ function sendResult() {
       score,
       q1: answers[0],
       q2: answers[1],
-      q3: answers[2]
+      q3: answers[2],
+      q4: answers[3]
     })
   }).then(() => {
     clearInterval(timer);
@@ -192,6 +193,7 @@ function showResult() {
           <li>Q1：${myResults[0]}</li>
           <li>Q2：${myResults[1]}</li>
           <li>Q3：${myResults[2]}</li>
+          <li>Q4：${myResults[3]}</li>
         </ul>
 
         <p><strong>正答数：</strong>${myScore} / 3</p>
@@ -205,6 +207,7 @@ function showResult() {
           <li>Q1 正答率：${rates[0]}%</li>
           <li>Q2 正答率：${rates[1]}%</li>
           <li>Q3 正答率：${rates[2]}%</li>
+          <li>Q3 正答率：${rates[3]}%</li>
         </ul>
       `;
     })
