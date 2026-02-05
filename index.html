@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DisneyQAの問題例</title>
+<title>DisneyQA</title>
 
 <style>
 body {
@@ -29,20 +29,13 @@ button {
 
 .correct { color: #ff6f91; font-weight: bold; }
 .wrong { color: #5f6caf; font-weight: bold; }
-
 .hidden { display: none; }
-
-#loading {
-  margin-top: 30px;
-  color: #ff6f91;
-  font-weight: bold;
-}
 </style>
 </head>
 
 <body>
 
-<h1>🏰DisneyQAの問題🏰</h1>
+<h1>🏰 DisneyQA 🏰</h1>
 
 <div id="start">
   <button onclick="startQuiz()">スタート</button>
@@ -50,45 +43,33 @@ button {
 
 <div id="quiz" class="hidden"></div>
 <div id="feedback" class="hidden"></div>
-
-<!-- 集計中表示 -->
-<div id="loading" class="hidden">
-  <h2>📊 結果を集計中…</h2>
-  <p id="countdown">少々お待ちください</p>
-</div>
-
 <div id="result" class="hidden"></div>
 
 <script>
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwUAVTkDYMgx7XMGT3rXNdS8oVjZpKM3peIGN9yK9ABqHXz5lP-nFJxS4rRsJfhukU/exec";
+const SCRIPT_URL = "ここにあなたのGASのURLを貼る";
 
 const quiz = [
   {
-    author: "人間",
     q: "東京ディズニーランドのメインエントランスの建築様式は？",
     c: ["チューダー朝様式","スチュアート様式","ジョージ王朝様式","ヴィクトリア朝様式"],
     a: 3
   },
   {
-    author: "ChatGPT",
     q: "映画『ズートピア』で、ニックが子どもの頃に着ていたボーイスカウトの衣装の色は？",
     c: ["緑","青","赤","黄色"],
     a: 0
   },
   {
-    author: "Gemini3",
     q: "ウォルト・ディズニー・ワールド（フロリダ）の地下にある広大なトンネル「ユーティリドール」。ウォルトがこれを作る決意をした「きっかけ」は何ですか？",
     c: ["突然の豪雨からキャストを守るため","スタッフ専用の駐車場を作るため","ゴミの回収をゲストに見せないため","トゥモローランドにカウボーイがいるのを見たから"],
     a: 3
   },
   {
-    author: "Claude-Sonnet4.5",
     q: "東京ディズニーランドの「ホーンテッドマンション」に登場する「999人の亡霊」のうち、あと何人で1000人になると言われている？",
     c: ["あなた（ゲスト）","もう1000人に達している","まだ募集中","カウントされていない"],
     a: 0
   }
 ];
-
 
 let current = 0;
 let answers = [];
@@ -139,20 +120,6 @@ function nextQuestion() {
 function sendResult() {
   const score = answers.filter(a => a).length;
 
-  // 集計中表示
-  document.getElementById("loading").classList.remove("hidden");
-
-  let seconds = 3;
-  const countdownEl = document.getElementById("countdown");
-  countdownEl.textContent = `結果表示まで ${seconds} 秒…`;
-
-  const timer = setInterval(() => {
-    seconds--;
-    if (seconds > 0) {
-      countdownEl.textContent = `結果表示まで ${seconds} 秒…`;
-    }
-  }, 1000);
-
   fetch(SCRIPT_URL, {
     method: "POST",
     body: JSON.stringify({
@@ -162,62 +129,36 @@ function sendResult() {
       q3: answers[2],
       q4: answers[3]
     })
-  }).then(() => {
-    clearInterval(timer);
-    showResult();
+  })
+  .then(() => showResult())
+  .catch(() => {
+    document.getElementById("result").classList.remove("hidden");
+    document.getElementById("result").innerHTML =
+      "<h2>通信エラーが発生しました</h2>";
   });
 }
 
 function showResult() {
-  document.getElementById("loading").classList.add("hidden");
-
   fetch(SCRIPT_URL)
     .then(res => res.json())
     .then(data => {
-
-      const myResults = answers.map(a => a ? "⭕" : "❌");
-      const myScore = answers.filter(a => a).length;
-      const total = data.totalUsers || 0;
-
+      const total = data.totalUsers;
       const rates = data.correct.map(c =>
-        total > 0 ? Math.round((c / total) * 100) : 0
+        total ? Math.round(c / total * 100) : 0
       );
 
       document.getElementById("result").classList.remove("hidden");
-
       document.getElementById("result").innerHTML = `
         <h2>🎀 結果 🎀</h2>
-
-        <h3>あなたの結果</h3>
-        <ul style="list-style:none; padding:0;">
-          <li>Q1(人間)：${myResults[0]}</li>
-          <li>Q2(ChatGPT)：${myResults[1]}</li>
-          <li>Q3(Gemini3)：${myResults[2]}</li>
-          <li>Q4(Claude-Sonnet4,5)：${myResults[3]}</li>
-        </ul>
-
-        <p><strong>正答数：</strong>${myScore} / 4</p>
-
-        <hr>
-
-        <h3>みんなの結果</h3>
-        <p>👤 解いた人数：${total} 人</p>
-
-        <ul style="list-style:none; padding:0;">
-          <li>Q1(人間) 正答率：${rates[0]}%</li>
-          <li>Q2(ChatGPT) 正答率：${rates[1]}%</li>
-          <li>Q3(Gemini3) 正答率：${rates[2]}%</li>
-          <li>Q4(Claude-Sonnet4.5) 正答率：${rates[3]}%</li>
+        <p>正答数：${answers.filter(a=>a).length} / 4</p>
+        <p>解いた人数：${total} 人</p>
+        <ul style="list-style:none;padding:0;">
+          <li>Q1 正答率：${rates[0]}%</li>
+          <li>Q2 正答率：${rates[1]}%</li>
+          <li>Q3 正答率：${rates[2]}%</li>
+          <li>Q4 正答率：${rates[3]}%</li>
         </ul>
       `;
-    })
-    .catch(err => {
-      document.getElementById("result").classList.remove("hidden");
-      document.getElementById("result").innerHTML = `
-        <h2>⚠️ 結果を取得できませんでした</h2>
-        <p>Apps Script との通信に失敗しています</p>
-      `;
-      console.error(err);
     });
 }
 </script>
