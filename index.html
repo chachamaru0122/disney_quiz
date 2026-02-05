@@ -30,6 +30,12 @@ button {
 .correct { color: #ff6f91; font-weight: bold; }
 .wrong { color: #5f6caf; font-weight: bold; }
 .hidden { display: none; }
+
+#loading {
+  margin-top: 40px;
+  color: #ff6f91;
+  font-weight: bold;
+}
 </style>
 </head>
 
@@ -43,15 +49,15 @@ button {
 
 <div id="quiz" class="hidden"></div>
 <div id="feedback" class="hidden"></div>
-<div id="result" class="hidden"></div>
-  
+
+<!-- 集計中表示 -->
 <div id="loading" class="hidden">
   <h2>📊 結果を集計中…</h2>
   <p>少々お待ちください</p>
 </div>
 
 <div id="result" class="hidden"></div>
-  
+
 <script>
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyxyHdRbY0YZZxNbqInyNGJYv2voRzzYkVu67-jXDEd3amWIj0MkjK5BRCt0lyxoImw/exec";
 
@@ -125,20 +131,25 @@ function nextQuestion() {
 }
 
 function sendResult() {
-  const score = answers.filter(a => a).length;
+  // 集計中表示
+  document.getElementById("loading").classList.remove("hidden");
 
   fetch(SCRIPT_URL, {
     method: "POST",
     body: JSON.stringify({
-      score,
+      score: answers.filter(a => a).length,
       q1: answers[0],
       q2: answers[1],
       q3: answers[2],
       q4: answers[3]
     })
   })
-  .then(() => showResult())
+  .then(() => {
+    // 1秒だけ待ってから結果表示
+    setTimeout(showResult, 1000);
+  })
   .catch(() => {
+    document.getElementById("loading").classList.add("hidden");
     document.getElementById("result").classList.remove("hidden");
     document.getElementById("result").innerHTML =
       "<h2>通信エラーが発生しました</h2>";
@@ -146,6 +157,8 @@ function sendResult() {
 }
 
 function showResult() {
+  document.getElementById("loading").classList.add("hidden");
+
   fetch(SCRIPT_URL)
     .then(res => res.json())
     .then(data => {
@@ -160,10 +173,10 @@ function showResult() {
         <p>正答数：${answers.filter(a=>a).length} / 4</p>
         <p>解いた人数：${total} 人</p>
         <ul style="list-style:none;padding:0;">
-          <li>Q1 正答率：${rates[0]}%</li>
-          <li>Q2 正答率：${rates[1]}%</li>
-          <li>Q3 正答率：${rates[2]}%</li>
-          <li>Q4 正答率：${rates[3]}%</li>
+          <li>Q1(人間)正答率：${rates[0]}%</li>
+          <li>Q2(ChatGPT)正答率：${rates[1]}%</li>
+          <li>Q3(Geimini3)正答率：${rates[2]}%</li>
+          <li>Q4(Claude-Sonnet4.5)正答率：${rates[3]}%</li>
         </ul>
       `;
     });
