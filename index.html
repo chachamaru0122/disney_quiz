@@ -80,15 +80,15 @@ const quiz = [
     q: "ウォルト・ディズニー・ワールド（フロリダ）の地下にある広大なトンネル「ユーティリドール」。ウォルトがこれを作る決意をした「きっかけ」は何ですか？",
     c: ["突然の豪雨からキャストを守るため","スタッフ専用の駐車場を作るため","ゴミの回収をゲストに見せないため","トゥモローランドにカウボーイがいるのを見たから"],
     a: 3
-  }
-];
-   {
+  },
+  {
     author: "Claude-Sonnet4.5",
     q: "東京ディズニーランドの「ホーンテッドマンション」に登場する「999人の亡霊」のうち、あと何人で1000人になると言われている？",
     c: ["あなた（ゲスト）","もう1000人に達している","まだ募集中","カウントされていない"],
     a: 0
   }
 ];
+
 
 let current = 0;
 let answers = [];
@@ -190,13 +190,13 @@ function showResult() {
 
         <h3>あなたの結果</h3>
         <ul style="list-style:none; padding:0;">
-          <li>Q1：${myResults[0]}</li>
-          <li>Q2：${myResults[1]}</li>
-          <li>Q3：${myResults[2]}</li>
-          <li>Q4：${myResults[3]}</li>
+          <li>Q1(人間)：${myResults[0]}</li>
+          <li>Q2(ChatGPT)：${myResults[1]}</li>
+          <li>Q3(Gemini3)：${myResults[2]}</li>
+          <li>Q4(Claude-Sonnet4,5)：${myResults[3]}</li>
         </ul>
 
-        <p><strong>正答数：</strong>${myScore} / 3</p>
+        <p><strong>正答数：</strong>${myScore} / 4</p>
 
         <hr>
 
@@ -204,10 +204,10 @@ function showResult() {
         <p>👤 解いた人数：${total} 人</p>
 
         <ul style="list-style:none; padding:0;">
-          <li>Q1 正答率：${rates[0]}%</li>
-          <li>Q2 正答率：${rates[1]}%</li>
-          <li>Q3 正答率：${rates[2]}%</li>
-          <li>Q3 正答率：${rates[3]}%</li>
+          <li>Q1(人間) 正答率：${rates[0]}%</li>
+          <li>Q2(ChatGPT) 正答率：${rates[1]}%</li>
+          <li>Q3(Gemini3) 正答率：${rates[2]}%</li>
+          <li>Q4(Claude-Sonnet4.5) 正答率：${rates[3]}%</li>
         </ul>
       `;
     })
