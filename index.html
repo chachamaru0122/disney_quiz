@@ -41,7 +41,7 @@ button {
 
 <body>
 
-<h1>🏰 DisneyQA 🏰</h1>
+<h1>🏰DisneyQA🏰</h1>
 
 <div id="start">
   <button onclick="startQuiz()">スタート</button>
@@ -169,8 +169,8 @@ function showResult() {
 
       document.getElementById("result").classList.remove("hidden");
       document.getElementById("result").innerHTML = `
-        <h2>🎀 結果 🎀</h2>
-        <p>正答数：${answers.filter(a=>a).length} / 4</p>
+        <h2>🎀結果🎀</h2>
+        <p>あなたの正答数：${answers.filter(a=>a).length} / 4</p>
         <p>解いた人数：${total} 人</p>
         <ul style="list-style:none;padding:0;">
           <li>Q1(人間)正答率：${rates[0]}%</li>
